@@ -1,4 +1,4 @@
-require "utils/version"
+require 'utils/version'
 require 'open-uri'
 require 'fastimage'
 
@@ -83,15 +83,71 @@ class String
     end
     ""
   end
+  
+  #文字列をあらゆる n 通リに分割する
+  def separate(n)
+    return [[self]] if n <= 1 or n > self.length
+    if n == 2
+      st = self
+      return [[st]] if st.length == 1
+      ar = []
+      (st.length - 1).times {|i| ar << [st[0..i], st[i + 1..-1]]}
+      ar
+    else
+      seprt([[self]], n)
+    end
+  end
+  
+  def seprt(ar, n)
+    if n == 2
+      a = []
+      ar.each do |ar1|
+        b = ar1.dup
+        ar1.each_with_index do |st, j|
+          next if st.length == 1
+          st.separate(2).each do |ar2|
+            c = b.dup
+            c[j] = ar2
+            c.flatten!
+            a << c
+          end
+        end
+      end
+      a.uniq
+    else
+      (n - 1).times {ar = seprt(ar, 2)}
+      ar
+    end
+  end
+  private :seprt
+  
+  #循環小数を分数に直す
+  alias :__to_r__ :to_r
+  def to_r
+    s = self
+    sign = 1
+    if s[0] == "-"
+      sign = - 1
+      s = s[1..-1]
+    end
+    m = /(\d+)\.(\d*)\((\d+)\)$/.match(s)
+    unless m
+      __to_r__
+    else
+      a = (m[1] + "." + m[2]).__to_r__
+      b = ((m[1] + m[2] + m[3]).to_i * 10 ** (- m[2].length)).to_r
+      (sign * (b - a) / (10 ** m[3].length - 1)).to_r
+    end
+  end
+  protected :__to_r__
 end
 
-#任意の階層だけ繰り返しをネストする
 class Array
+  #任意の階層だけ繰り返しをネストする
   def nest_loop(&bk)
     nsloop(self, [], &bk)
   end
   
-  private
   def nsloop(ar1, ar2, &bk)
     tmp1 = ar1.dup
     time = tmp1.shift
@@ -104,6 +160,101 @@ class Array
         nsloop(tmp1, tmp2, &bk)
       end
     end
+  end
+  private :nsloop
+end
+
+module Kernel
+  #indexつき無限ループ
+  def loop_with_index
+    i = 0
+    begin
+      yield(i)
+    end while (i += 1)
+  end
+end
+
+class Rational
+  #分数を循環小数に直す
+  def to_rec_decimal
+    st = main(self.abs)
+    self.no_minus? ? st : "-" + st
+  end
+  
+  def rec_decimal?
+    slf = self.abs
+    @nume = slf.numerator
+    @deno = slf.denominator
+    return false if @deno == 1
+    get_rcycle.size == 1 ? false : true
+  end
+
+  def abs
+    self.no_minus? ? self : self * (-1)
+  end
+  
+  def no_minus?
+    self.numerator >= 0
+  end
+  
+  def no_plus?
+    self.numerator <= 0
+  end
+  
+  def main(slf)
+    @nume = slf.numerator
+    @deno = slf.denominator
+    return "#{@nume}" if @deno == 1
+    n = @nume / @deno
+    ar = get_rcycle
+    repetition_num = {}
+    s = {}
+    return "#{n}.#{ar[0][1..-1].join}" if ar.size == 1
+    idx = repetition_num[@deno] = ar[1].size - ar[2]
+    output_st(ar, idx, n)
+  end
+  
+  def get_rcycle
+    quotient = []
+    remainder = []
+    divided = @nume - (@nume / @deno) * @deno
+    loop do
+      quotient << divided / @deno
+      a = divided % @deno
+      return [quotient] if a.zero?
+      if (b = remainder.index(a))
+        return [quotient, remainder, b]
+      end
+      remainder << a
+      divided = a * 10
+    end
+  end
+
+  def output_st(ar, idx, n)
+    st = ar[0].join[1..-1]
+    if (ln = st.length) > idx
+      idx = ln - idx
+      "#{n}.#{st[0..(idx - 1)]}(#{st[idx..-1]})"
+    else
+      "#{n}.(#{st})"
+    end
+  end
+  private :main, :get_rcycle, :output_st
+end
+
+#整数を2数の積に分ける/約数を求める
+class Integer
+  def divide2(include1=false)
+    ar = []
+    s = include1 ? 1 : 2 
+    for i in s..(self ** 0.5)
+      ar.push([i, self / i]) if (self % i).zero?
+    end
+    ar
+  end
+  
+  def divisors
+    divide2(true).flatten.uniq.sort
   end
 end
 
