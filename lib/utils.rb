@@ -258,3 +258,20 @@ class Integer
   end
 end
 
+class Float
+  def integer?
+    (self - self.to_i).zero?
+  end
+end
+
+#多重配列を簡単に生成する
+class Array
+  def self.make(ar, ob=nil)
+    raise "Argument class Error" unless ar.class == Array
+    a = ar.dup
+    ar1 = []
+    a.shift.times {ar1 << (a.empty? ? (ob.dup rescue ob) : Array.make(a, ob))}
+    ar1
+  end
+end
+
