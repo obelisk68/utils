@@ -84,8 +84,17 @@ class String
     ""
   end
   
-  #文字列をあらゆる n 通リに分割する
+  #文字列をあらゆる n 通リに分割する（ブロックがあれば実行、なければEnumeratorを返す）
   def separate(n)
+    ar = seprt2(n)
+    if block_given?
+      ar.each {|ob| yield(ob)}
+    else
+      ar.to_enum
+    end
+  end
+  
+  def seprt2(n)
     return [[self]] if n <= 1 or n > self.length
     if n == 2
       st = self
@@ -119,7 +128,7 @@ class String
       ar
     end
   end
-  private :seprt
+  private :seprt, :seprt2
   
   #循環小数を分数に直す
   alias :__to_r__ :to_r
@@ -275,3 +284,34 @@ class Array
   end
 end
 
+#一文字入力
+module Utils
+  def self.key_wait
+    c = nil
+    loop {break if (c = STDIN.getch)}
+    STDIN.cooked!
+    c
+  end
+end
+
+#配列のディープコピー
+class Object
+  def deep_copy
+    Marshal.load(Marshal.dump(self))
+  end
+end
+
+#マイクロ秒まで採った現在時刻を、アルファベットの辞書順になるように変換して出力する
+module Utils
+  def self.time_lexic
+    t = Time.now
+    i = (t.to_i.to_s + sprintf("%06d", t.usec)).to_i
+    ar = ("a".."z").to_a
+    st = ""
+    begin
+      st = ar[i % 26] + st
+      i /= 26
+    end while i > 0
+    st
+  end
+end
