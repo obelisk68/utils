@@ -175,8 +175,7 @@ end
 
 module Kernel
   #indexつき無限ループ
-  def loop_with_index
-    i = 0
+  def loop_with_index(i=0)
     begin
       yield(i)
     end while (i += 1)
@@ -315,3 +314,15 @@ module Utils
     st
   end
 end
+
+#配列の要素aをすべてbで置き換える
+class Array
+  def change!(a, b)
+    map! {|i| (i == a) ? b : i}
+  end
+  
+  def change(a, b)
+    map {|i| (i == a) ? b : i}
+  end
+end
+
