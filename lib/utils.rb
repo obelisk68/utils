@@ -300,6 +300,14 @@ class Object
   end
 end
 
+#階乗
+class Integer
+  def factorial
+    return 1 if self == 1 or self.zero?
+    self * ((self - 1).factorial)
+  end
+end
+
 #マイクロ秒まで採った現在時刻を、アルファベットの辞書順になるように変換して出力する
 module Utils
   def self.time_lexic
@@ -323,6 +331,18 @@ class Array
   
   def change(a, b)
     map {|i| (i == a) ? b : i}
+  end
+end
+
+#順列と組み合わせ
+module Utils
+  def self.permutation(a, b)
+    a.factorial / (a - b).factorial
+  end
+  
+  def self.combination(a, b)
+    return 1 if a == b or b.zero?
+    a.factorial / ((a - b).factorial * b.factorial)
   end
 end
 
