@@ -34,7 +34,7 @@ VALUE divisors(VALUE self) {
       rb_ary_push(ar, INT2FIX(se / i));
     }
   }
-  return ar;
+  return rb_funcall(ar, rb_intern("uniq"), 0);
 }
 
 void Init_utilsc(void){
