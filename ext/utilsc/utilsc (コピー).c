@@ -1,5 +1,4 @@
 #include "utilsc.h"
-#include "math.h"
 
 long gcd(long x, long y) {
   long tmp;
@@ -20,27 +19,9 @@ VALUE totient(VALUE self) {
   return INT2FIX(a);
 }
 
-VALUE divisors(VALUE self) {
-  int a;
-  long i, se;
-  VALUE ar;
-  
-  se = FIX2LONG(self);
-  ar = rb_ary_new();
-  a = (int)sqrt(se);
-  for (i = 1; i <= a; i++) {
-    if (!(se % i)) {
-      rb_ary_push(ar, INT2FIX(i));
-      rb_ary_push(ar, INT2FIX(se / i));
-    }
-  }
-  return ar;
-}
-
 void Init_utilsc(void){
   VALUE fix;
   
   fix = rb_const_get(rb_cObject, rb_intern("Fixnum"));
   rb_define_method(fix, "totient", totient, 0);
-  rb_define_method(fix, "divisors", divisors, 0);
 }
