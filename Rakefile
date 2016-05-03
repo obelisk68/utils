@@ -1,5 +1,4 @@
 require "bundler/gem_tasks"
-<<<<<<< HEAD
 require "rake/extensiontask"
 
 task :build => :compile
@@ -9,6 +8,4 @@ Rake::ExtensionTask.new("utilsc") do |ext|
 end
 
 task :default => [:clobber, :compile, :spec]
-=======
 task :default => :spec
->>>>>>> temp1
