@@ -10,33 +10,33 @@ module Utils
       klass = self.class
       len = self.length
       unless step
-	return klass.new unless !right or right != 0
-	left ||= 0
-	right ||= 0
-	right -= 1
-	self[left..right]
+        return klass.new unless !right or right != 0
+        left ||= 0
+        right ||= 0
+        right -= 1
+        self[left..right]
       else
-	if step > 0
-	  left ||= 0
-	  right ||= len
-	  left = convp(left, len)
-	  right = convp(right, len)
-	  right = len if right >= len
-	  right -= 1
-	elsif step < 0
-	  left ||= len - 1
-	  left = len - 1 if left >= len
-	  right ||= - len - 1
-	  left = convm(left, len)
-	  right = convm(right, len)
-	  right = - len - 1 if right < - len - 1
-	  right += 1
-	else
-	  raise "ValueError: slice step cannot be zero"
-	end
-	selected = klass.new
-	left.step(right, step) {|i| selected << self[i]}
-	selected
+        if step > 0
+          left ||= 0
+          right ||= len
+          left = convp(left, len)
+          right = convp(right, len)
+          right = len if right >= len
+          right -= 1
+        elsif step < 0
+          left ||= len - 1
+          left = len - 1 if left >= len
+          right ||= - len - 1
+          left = convm(left, len)
+          right = convm(right, len)
+          right = - len - 1 if right < - len - 1
+          right += 1
+        else
+          raise "ValueError: slice step cannot be zero"
+        end
+        selected = klass.new
+        left.step(right, step) {|i| selected << self[i]}
+        selected
       end
     end
     
@@ -54,15 +54,15 @@ module Utils
   Array.send(:include, Pyrb)
   String.send(:include, Pyrb)  
   
-  def self.imgexist?(url)
+  def imgexist?(url)
     FastImage.size(url)
   end
   
-  def self.getfile(url, filename, max=0)
+  def getfile(url, filename, max=0)
     count = 0
     begin
       open(filename, 'wb') do |file|
-	open(url) {|data| file.write(data.read)}
+        open(url) {|data| file.write(data.read)}
       end
       true 
     rescue
@@ -74,6 +74,7 @@ module Utils
       retry
     end
   end
+  module_function :imgexist?, :getfile
 end
   
 class String 
@@ -175,10 +176,10 @@ end
 
 module Kernel
   #indexつき無限ループ
-  def loop_with_index(i=0)
+  def loop_with_index(i = 0, step = 1)
     begin
       yield(i)
-    end while (i += 1)
+    end while (i += step)
   end
 end
 
@@ -261,7 +262,7 @@ class Integer
     ar
   end
   
-  def divisors
+  def divisors_int
     divide2(true).flatten.uniq.sort
   end
 end
@@ -285,12 +286,13 @@ end
 
 #一文字入力
 module Utils
-  def self.key_wait
+  def key_wait
     c = nil
     loop {break if (c = STDIN.getch)}
     STDIN.cooked!
     c
   end
+  module_function :key_wait
 end
 
 #配列のディープコピー
@@ -310,7 +312,7 @@ end
 
 #マイクロ秒まで採った現在時刻を、アルファベットの辞書順になるように変換して出力する
 module Utils
-  def self.time_lexic
+  def time_lexic
     t = Time.now
     i = (t.to_i.to_s + sprintf("%06d", t.usec)).to_i
     ar = ("a".."z").to_a
@@ -321,6 +323,7 @@ module Utils
     end while i > 0
     st
   end
+  module_function :time_lexic
 end
 
 #配列の要素aをすべてbで置き換える
@@ -336,13 +339,14 @@ end
 
 #順列と組み合わせ
 module Utils
-  def self.permutation(a, b)
+  def permutation(a, b)
     a.factorial / (a - b).factorial
   end
   
-  def self.combination(a, b)
+  def combination(a, b)
     return 1 if a == b or b.zero?
     a.factorial / ((a - b).factorial * b.factorial)
   end
+  module_function :permutation, :combination
 end
 
