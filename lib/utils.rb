@@ -306,8 +306,10 @@ end
 #階乗
 class Integer
   def factorial
-    return 1 if self == 1
-    self * ((self - 1).factorial)
+    return 1 if zero?
+    ans = 1
+    downto(2) {|i| ans *= i}
+    ans
   end
 end
 
@@ -349,5 +351,39 @@ module Utils
     a.factorial / ((a - b).factorial * b.factorial)
   end
   module_function :permutation, :combination
+end
+
+
+#末尾呼び出しの回避
+module Utils
+  def trcall(value)
+    while value.instance_of?(Proc)
+      value = value.call
+    end
+    value
+  end
+  module_function :trcall
+end
+
+class Module
+  def tco(meth)
+    called = false
+    tmp = nil
+    
+    orig_meth = "orig_#{meth}"
+    alias_method orig_meth, meth
+    private orig_meth
+    
+    define_method(meth) do |*args|
+      unless called
+        called = true
+        args = tmp until result = send(orig_meth, *args)
+        result
+      else
+        tmp = args
+        false
+      end
+    end
+  end
 end
 
