@@ -399,3 +399,24 @@ class String
     gsub!(%r!(:|\/|\*|\?|\"|<|>|\\)!, "")
   end
 end
+
+#Zコンビネータ
+module Utils
+  Z = ->(f) {
+    ->(x){
+      f[ ->(y) {x[x][y]} ]
+    }[
+      ->(x){
+        f[ ->(y) {x[x][y]} ]
+      }
+    ]
+  }
+end
+
+class Object
+  def nil_trans(obj = "")
+    (self == nil) ? obj : self
+  end
+end
+
+
