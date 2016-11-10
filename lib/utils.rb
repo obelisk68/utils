@@ -421,15 +421,33 @@ end
 
 class Counter
   def self.make(mname, counter = 0, step = 1)
+    f = true
     counter -= step
     Object.class_eval do
       define_method(mname) do |*arg|
-        step = arg[0] if arg.size >= 1
-        counter += step
+        if arg.size >= 1
+          counter += step if f
+          counter += arg[0]
+        else
+          counter += step
+        end
+        f = false
+        counter
       end
     end
   end
 end
 
+module Enumerable
+  def map_to_h(&bl)
+    map(&bl).to_h
+  end
+end
+
+class Hash
+  def collect_keys(value)
+    each_key.select {|k| self[k] == value}
+  end
+end
 
 
