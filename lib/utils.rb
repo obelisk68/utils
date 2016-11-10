@@ -423,7 +423,8 @@ class Counter
   def self.make(mname, counter = 0, step = 1)
     counter -= step
     Object.class_eval do
-      define_method(mname) do
+      define_method(mname) do |*arg|
+        step = arg[0] if arg.size >= 1
         counter += step
       end
     end
