@@ -419,4 +419,16 @@ class Object
   end
 end
 
+class Counter
+  def self.make(mname, counter = 0, step = 1)
+    counter -= step
+    Object.class_eval do
+      define_method(mname) do
+        counter += step
+      end
+    end
+  end
+end
+
+
 
