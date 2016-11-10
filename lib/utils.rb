@@ -353,7 +353,6 @@ module Utils
   module_function :permutation, :combination
 end
 
-
 #末尾呼び出しの回避
 module Utils
   def trcall(value)
@@ -387,3 +386,16 @@ class Module
   end
 end
 
+#selfをブロック内で処理して返す
+class Object
+  def flow
+    return yield(self)
+  end
+end
+
+#フォルダ名、ファイル名に使っていけない文字を消去する
+class String
+  def fname_filter
+    gsub!(%r!(:|\/|\*|\?|\"|<|>|\¥)!,　"")
+  end
+end
