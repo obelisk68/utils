@@ -397,6 +397,7 @@ end
 class String
   def fname_filter
     gsub!(%r!(:|\/|\*|\?|\"|<|>|\\)!, "")
+    self
   end
 end
 
@@ -450,4 +451,22 @@ class Hash
   end
 end
 
+class Integer
+  def times_retry(message: true, wait: 0)
+    n = 1
+    begin
+      yield(n)
+    rescue => e
+      if n <= self
+        puts "Error: retry #{n}" if message
+        puts e.backtrace if message
+        n += 1
+        sleep(wait)
+        retry
+      end
+      puts "Error: stop" if message
+      raise e
+    end
+  end
+end
 
