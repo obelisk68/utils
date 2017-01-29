@@ -157,7 +157,7 @@ class Array
   #任意の階層だけ繰り返しをネストする
   def nest_loop(arg = [], &bk)
     check = lambda do |obj|
-      return 0...obj if (c = obj.class) == Bignum or c == Fixnum
+      return 0...obj if (c = obj.class) == Bignum or c == Integer or c == Fixnum
       obj
     end
     
