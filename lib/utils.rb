@@ -165,7 +165,6 @@ class Array
     for i in check.call(ar.shift)
       if ar.empty?
         yield(arg + [i])
-        next
       else
         ar.nest_loop(arg.push(i), &bk)
         arg.pop
