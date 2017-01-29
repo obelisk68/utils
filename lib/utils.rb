@@ -155,24 +155,24 @@ end
 
 class Array
   #任意の階層だけ繰り返しをネストする
-  def nest_loop(&bk)
-    nsloop(self, [], &bk)
-  end
-  
-  def nsloop(ar1, ar2, &bk)
-    tmp1 = ar1.dup
-    time = tmp1.shift
-    unless time
-      bk.call(ar2)
-    else
-      time.times do |i|
-        tmp2 = ar2.dup
-        tmp2.push(i)
-        nsloop(tmp1, tmp2, &bk)
+  def nest_loop(arg = [], &bk)
+    check = lambda do |obj|
+      return 0...obj if (c = obj.class) == Bignum or c == Fixnum
+      obj
+    end
+    
+    ar = dup
+    for i in check.call(ar.shift)
+      if ar.empty?
+        yield(arg + [i])
+        next
+      else
+        ar.nest_loop(arg.push(i), &bk)
+        arg.pop
       end
     end
+    self
   end
-  private :nsloop
 end
 
 module Kernel
