@@ -2,6 +2,7 @@ require "utils/version"
 require 'open-uri'
 require 'fastimage'
 require "io/console"
+require 'gtk2'
 
 module Utils
   #Pythonの配列のsliceと同等のメソッド
@@ -469,3 +470,24 @@ class Integer
   end
 end
 
+#プログレスバーの表示
+module Utils
+  def progress_bar
+    w = Gtk::Window.new
+    w.signal_connect("destroy") {Gtk.main_quit}
+    w.set_size_request(300, 50)
+    w.border_width = 10
+    w.title = "Progress"
+    
+    bar = Gtk::ProgressBar.new
+    w.add(bar)
+  
+    Thread.new(bar) do |bar|
+      yield(bar)
+    end
+      
+    w.show_all
+    Gtk.main
+  end
+  module_function :progress_bar
+end
