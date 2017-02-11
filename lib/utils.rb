@@ -1,5 +1,6 @@
 require "utils/version"
 require 'open-uri'
+require 'fileutils'
 require 'fastimage'
 require "io/console"
 require 'gtk2'
@@ -491,3 +492,17 @@ module Utils
   end
   module_function :progress_bar
 end
+
+#画像ファイルでなければ削除
+module Utils
+  def delete_non_img(fname)
+    if Utils.imgexist?(fname)
+      false
+    else
+      FileUtils.rm(fname)
+      true
+    end
+  end
+  module_function :delete_non_img
+end
+
