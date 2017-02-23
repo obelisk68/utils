@@ -493,8 +493,8 @@ module Utils
   module_function :progress_bar
 end
 
-#画像ファイルでなければ削除
 module Utils
+  #画像ファイルでなければ削除
   def delete_non_img(fname)
     if Utils.imgexist?(fname)
       false
@@ -504,5 +504,15 @@ module Utils
     end
   end
   module_function :delete_non_img
+  
+  #指定したディレクトリの空フォルダを削除
+  def delete_empty_folder(fname = './')
+    Dir.chdir(fname)
+    Dir.glob("*").each do |name|
+      next unless File.directory?(name)
+      Dir.rmdir(p name) if Dir.glob("./#{name}/*").empty?
+    end
+  end
+  module_function :delete_empty_folder
 end
 
