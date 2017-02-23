@@ -510,7 +510,7 @@ module Utils
     Dir.chdir(fname)
     Dir.glob("*").each do |name|
       next unless File.directory?(name)
-      Dir.rmdir(p name) if Dir.glob("./#{name}/*").empty?
+      Dir.rmdir(p name) if Dir.glob("./#{name}/*").empty? rescue next
     end
   end
   module_function :delete_empty_folder
