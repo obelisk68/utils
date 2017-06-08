@@ -13,33 +13,33 @@ module Utils
       klass = self.class
       len = self.length
       unless step
-	return klass.new unless !right or right != 0
-	left ||= 0
-	right ||= 0
-	right -= 1
-	self[left..right]
-      else
-	if step > 0
-	  left ||= 0
-	  right ||= len
-	  left = convp(left, len)
-	  right = convp(right, len)
-	  right = len if right >= len
-	  right -= 1
-	elsif step < 0
-	  left ||= len - 1
-	  left = len - 1 if left >= len
-	  right ||= - len - 1
-	  left = convm(left, len)
-	  right = convm(right, len)
-	  right = - len - 1 if right < - len - 1
-	  right += 1
-	else
-	  raise "ValueError: slice step cannot be zero"
-	end
-	selected = klass.new
-	left.step(right, step) {|i| selected << self[i]}
-	selected
+        return klass.new unless !right or right != 0
+        left ||= 0
+        right ||= 0
+        right -= 1
+        self[left..right]
+            else
+        if step > 0
+          left ||= 0
+          right ||= len
+          left = convp(left, len)
+          right = convp(right, len)
+          right = len if right >= len
+          right -= 1
+        elsif step < 0
+          left ||= len - 1
+          left = len - 1 if left >= len
+          right ||= - len - 1
+          left = convm(left, len)
+          right = convm(right, len)
+          right = - len - 1 if right < - len - 1
+          right += 1
+        else
+          raise "ValueError: slice step cannot be zero"
+        end
+        selected = klass.new
+        left.step(right, step) {|i| selected << self[i]}
+        selected
       end
     end
     
@@ -516,3 +516,10 @@ module Utils
   module_function :delete_empty_folder
 end
 
+#ベルを鳴らす
+module Utils
+  def bell
+    `paplay /usr/share/sounds/freedesktop/stereo/complete.oga`
+  end
+  module_function :bell
+end
